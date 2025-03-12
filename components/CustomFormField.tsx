@@ -12,7 +12,10 @@ import {
 import { Input } from "@/components/ui/input"
 import { Control } from "react-hook-form"
 import { FormFieldType } from "./forms/PatientForm"
-
+import Image from "next/image"
+import 'react-phone-number-input/style.css'
+import PhoneInput from 'react-phone-number-input'
+import { E164Number } from "libphonenumber-js/core";
 interface CustomProps{
     control: Control<any>,
     fieldType : FormFieldType
@@ -29,12 +32,47 @@ interface CustomProps{
 }
 
 const RenderField = ({field, props}: {field:any; props: CustomProps}) =>{
-    return (
-        <Input 
-            type = "text"
-            placeholder="John Doe"
-        />
-    )
+    const {fieldType, iconSrc, iconAlt, placeholder, } = props;
+
+    switch(props.fieldType){
+        case FormFieldType.INPUT:
+            return(
+                <div className="flex rounded-md border border-dark-500 bg-dark-400">
+                    {iconSrc && (
+                        <Image 
+                            src={iconSrc}
+                            height={24}
+                            width={24}
+                            alt= {iconAlt || 'icon'}
+                            className="ml-2"
+                        />
+                    )}
+                    <FormControl>
+                        <Input 
+                        placeholder={placeholder}
+                        {...field}
+                        className="shad-input border-0"
+                        />
+                    </FormControl>
+                </div>
+            )
+        case FormFieldType.PHONE_INPUT:
+            return(
+                <FormControl>
+                    <PhoneInput 
+                    defaultCountry="IN"
+                    placeholder={placeholder}
+                    international
+                    withCountryCallingCode
+                    value={field.value as E164Number | undefined}
+                    onChange={field.onChange}
+                    className="input-phone"
+                    />  
+                </FormControl>
+            )
+            default:
+                break;
+    }
 }
 
 const CustomFormField = (props: CustomProps) => {

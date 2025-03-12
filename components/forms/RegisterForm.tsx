@@ -14,17 +14,8 @@ import { UserFormValidation } from "@/lib/validation"
 import {useRouter} from "next/navigation"
 import { createUser} from "@/lib/actions/patient.actions"
 
-export enum FormFieldType{
-    INPUT = 'input',
-    TEXTAREA = 'textarea',
-    PHONE_INPUT = 'phoneInput',
-    CHECKBOX = 'checkbox', 
-    DATE_PICKER = 'datePicker',
-    SELECT = 'select',
-    SKELETON = 'skeleton'
-}
  
-const PatientForm= () => {
+const RegisterForm= ({ user }: { user: User }) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false); 
   
@@ -38,28 +29,19 @@ const PatientForm= () => {
     },
   })
  
-  async function onSubmit({ name, email, phone }: z.infer<typeof UserFormValidation>) {
-    setIsLoading(true);
-    
-    try {
-      const userData = { name, email, phone };
-      console.log("Sending user data:", userData); // ✅ Debugging
+async function onSubmit({name, email, phone}: z.infer<typeof UserFormValidation>) {
+  setIsLoading(true);
   
-      const user = await createUser(userData);
-      console.log("User created:", user); // ✅ Debugging
-  
-      if (user) {
-        router.push(`/patients/${user.$id}/register`);
-      } else {
-        console.log("User creation failed, user is null or undefined");
-      }
-    } catch (error) {
-      console.log("Error in form submission:", error);
-    } finally {
-      setIsLoading(false);
-    }
+  try{
+    const userData = {name, email, phone};
+
+    const user = await createUser(userData);
+
+    if(user) router.push(`/patients/${user.$id}/register`)
+  } catch (error){
+    console.log(error);
   }
-  
+}
   return (
     <Form {...form}>
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -78,30 +60,10 @@ const PatientForm= () => {
             iconAlt = "user"
         />
 
-        <CustomFormField 
-            fieldType={FormFieldType.INPUT}
-            control={form.control}
-            name = "email"
-            label = "Email"
-            placeholder = "example@gmail.com"
-            iconSrc = "/assets/icons/email.svg"
-            iconAlt = "email"
-        />
-
-          <CustomFormField 
-            fieldType={FormFieldType.PHONE_INPUT}
-            control={form.control}
-            name = "phone"
-            label = "Phone number"
-            placeholder = "12456-7899"
-            iconSrc = "/assets/icons/email.svg"
-            iconAlt = ""
-        />
-
         <SubmitButton isLoading={isLoading}>Get Started</SubmitButton>
     </form>
   </Form>
     ) 
  }
 
-export default PatientForm
+export default RegisterForm

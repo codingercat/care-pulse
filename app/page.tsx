@@ -5,7 +5,7 @@ import Image from "next/image";
 
 export default function Home() {
   return (
-    <div className="flex h-screen max-h-screen ">
+    <div className="flex h-screen max-h-screen">
       {/*TODO: OTP VERIFICATION  | Passkey Modal*/}
 
       <section className="remove-scrollbar container my-auto">
@@ -37,9 +37,7 @@ export default function Home() {
         width={1000}
         alt = "patient"
         className="side-img max-w-[50%] "
-      >
-
-      </Image>
+      />
     </div>
   );
 }
